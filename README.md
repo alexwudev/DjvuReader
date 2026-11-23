@@ -1,56 +1,58 @@
 # DjvuReader
 
-精簡的 Windows 文件閱讀器，專門用來「快速打開、看內容」，操作方式參考 Adobe Reader。
-支援 **DjVu**、**FB2**（含 `.fb2.zip`）、**EPUB**、**PDF**。
+**English** | [繁體中文](README.zh-TW.md)
+
+A lightweight Windows document reader for quickly opening and reading files, modeled on Adobe Reader.
+Supports **DjVu**, **FB2** (including `.fb2.zip`), **EPUB** and **PDF**.
 
 ![icon](icon_preview.png)
 
-## 特色
+## Features
 
-- **大檔不卡死**：開檔、讀頁面尺寸、渲染都在背景執行緒，介面隨時可操作；只渲染看得到的頁面與前後頁。
-- **非英數檔名的 DjVu 也開得了**：DjVuLibre 命令列工具只吃 ANSI 路徑，檔名含中文、俄文等字元時會直接失敗。本程式改在同一磁碟建硬連結（不佔空間、不動原檔）給 DjVuLibre 讀，關檔後自動刪除。
-- **記住閱讀位置**：每個檔案重開時回到上次讀到的地方。
-- **頁面顯示**（右下角或「檢視 → 頁面顯示」）：單頁檢視、啟用捲動、雙頁檢視、雙頁捲動，可切換頁面間隙、雙頁檢視的封面頁。
-- **縮放**：實際大小、縮放至頁面層級、符合寬度、符合可見區域（自動裁掉頁邊空白），Ctrl＋滾輪以游標為中心縮放。
-- **旋轉檢視、自動捲動、閱讀模式、全螢幕**。
-- 目錄（書籤）側欄、最近開啟的檔案、拖放開檔、暗色介面。
+- **Large files never freeze the window**: opening files, reading page sizes and rendering all run on background threads, and only the visible pages (plus their neighbors) are rendered.
+- **DjVu files with non-ASCII names just work**: the DjVuLibre command-line tools only accept ANSI paths, so files named in Chinese, Russian and other scripts fail to open. DjvuReader creates a hard link on the same drive (no extra disk space, the original file is untouched) for DjVuLibre to read, and removes it when the file is closed.
+- **Remembers where you stopped**: each file reopens at your last reading position.
+- **Page display** (bottom-right corner, or View → Page Display): Single Page, Enable Scrolling, Two Page, Two Page Scrolling, with options for gaps between pages and showing the cover page in two-page view.
+- **Zoom**: Actual Size, Zoom to Page Level, Fit Width, Fit Visible (trims page margins automatically); Ctrl + mouse wheel zooms around the cursor.
+- **Rotate view, automatic scrolling, reading mode and full screen.**
+- Outline (bookmarks) sidebar, recent files, drag-and-drop opening and a dark interface.
 
-## 快速鍵（與 Adobe Reader 相同）
+## Keyboard shortcuts (same as Adobe Reader)
 
-| 功能 | 快速鍵 |
+| Action | Shortcut |
 | --- | --- |
-| 開啟 | Ctrl+O |
-| 移至頁面 | Ctrl+Shift+N／Ctrl+G |
-| 縮放至頁面層級／實際大小／符合寬度／符合可見區域 | Ctrl+0／Ctrl+1／Ctrl+2／Ctrl+3 |
-| 放大／縮小 | Ctrl+=／Ctrl+- |
-| 順時針／逆時針旋轉 | Ctrl+Shift++／Ctrl+Shift+- |
-| 自動捲動（↑↓ 調速、0–9 設速度） | Ctrl+Shift+H |
-| 閱讀模式 | Ctrl+H |
-| 全螢幕 | Ctrl+L／F11 |
-| 目錄 | F4 |
-| 上一頁／下一頁 | ←／→ |
+| Open | Ctrl+O |
+| Go to page | Ctrl+Shift+N / Ctrl+G |
+| Zoom to page level / Actual size / Fit width / Fit visible | Ctrl+0 / Ctrl+1 / Ctrl+2 / Ctrl+3 |
+| Zoom in / Zoom out | Ctrl+= / Ctrl+- |
+| Rotate clockwise / counterclockwise | Ctrl+Shift++ / Ctrl+Shift+- |
+| Automatic scrolling (↑↓ change speed, 0–9 set speed) | Ctrl+Shift+H |
+| Reading mode | Ctrl+H |
+| Full screen | Ctrl+L / F11 |
+| Outline | F4 |
+| Previous / next page | ← / → |
 
-## 執行與打包
+## Running and packaging
 
-需求：Python 3.12、PyQt6、PyMuPDF，以及 [DjVuLibre](https://djvu.sourceforge.net/)（`ddjvu`、`djvused`、`djvudump`；用 scoop 安裝：`scoop install djvulibre`）。
+Requirements: Python 3.12, PyQt6, PyMuPDF and [DjVuLibre](https://djvu.sourceforge.net/) (`ddjvu`, `djvused`, `djvudump`; install with scoop: `scoop install djvulibre`).
 
 ```powershell
 pip install PyQt6 pymupdf pyinstaller
-python djvu_reader.py 檔案.djvu
+python djvu_reader.py file.djvu
 ```
 
-打包成獨立程式（會把 DjVuLibre 一併打包進 `_internal\djvulibre`）：
+Build a standalone program (DjVuLibre is bundled into `_internal\djvulibre`):
 
 ```powershell
 python -m PyInstaller --noconfirm DjvuReader.spec
 ```
 
-產物在 `dist\DjvuReader\`，可複製到 `%LOCALAPPDATA%\Programs\DjvuReader\`。
-`python make_reg.py` 會產生 `DjvuReader_register.reg`，匯入後可在「開啟檔案」中選用本程式開 .djvu／.djv／.fb2／.epub。
-`python make_icon.py` 重新產生圖示。
+The output is in `dist\DjvuReader\`; copy it to `%LOCALAPPDATA%\Programs\DjvuReader\`.
+`python make_reg.py` generates `DjvuReader_register.reg`; import it to make DjvuReader available under "Open with" for .djvu / .djv / .fb2 / .epub files.
+`python make_icon.py` regenerates the icon.
 
-設定與閱讀位置存在 `%LOCALAPPDATA%\DjvuReader\settings.json`。
+Settings and reading positions are stored in `%LOCALAPPDATA%\DjvuReader\settings.json`.
 
-## 授權說明
+## Licenses
 
-DjVu 解碼使用 [DjVuLibre](https://djvu.sourceforge.net/)（GPL），FB2／EPUB／PDF 使用 [PyMuPDF](https://pymupdf.readthedocs.io/)（AGPL）。
+DjVu decoding uses [DjVuLibre](https://djvu.sourceforge.net/) (GPL); FB2 / EPUB / PDF use [PyMuPDF](https://pymupdf.readthedocs.io/) (AGPL).
