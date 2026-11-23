@@ -1,0 +1,5 @@
+﻿build/
+dist/
+__pycache__/
+# 由 make_reg.py 產生，內含本機安裝路徑
+DjvuReader_register.reg
